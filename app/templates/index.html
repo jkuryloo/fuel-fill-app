@@ -1,5 +1,27 @@
 {% extends 'base.html' %}
 
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
 {% block body %}
-    First
+    <header class="container">
+        <h1>Fuel Fill App</h1>
+        <p>An effortless app to track the expenses on your cars, check the average fuel consumption and <span>make your life easier</span></p>
+        <div class="row">
+            <h3>Pick your car:</h3>
+            {% for car in cars %}
+                <div class="car-wrapper col-12 col-md-4">
+                    <div class="car col-12">
+                        <h3>{{ cars[car]['name'] }}</h3>
+                        <p><span>Model:</span> {{ cars[car]['model'] }}</p>
+                        <p><span>Mileage:</span> {{ cars[car]['mileage'] }} km</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="#" class="btn btn-main">
+            Add new vehicle
+        </a>
+    </header>
 {% endblock %}
