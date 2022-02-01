@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#scss
+.sass-cache/
+*.css.map
+*.sass.map
+*.scss.map
