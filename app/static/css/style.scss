@@ -1,4 +1,79 @@
+$main: #E94F37;
+$second: #272833;
+$white: #fff;
+$black: #000;
+
 body{
+    margin: 0;
+    padding: 0;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
+}
+header{
+    height: 35vh;
+    background-image: url('../img/car.webp');
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: $black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    color: $white;
+    h1{
+        font-weight: 700;
+    }
+}
+section{
+    padding: 20px;
+    text-align: center;
+    h2{
+        font-weight: 700;
+        margin: 0;
+    }
+    p{
+        color: $second;
+        opacity: 0.3;
+    }
+    .row{
+        text-align: left;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .car-inner{
+        padding: 10px;
+        border-radius: 20px;
+        margin-top: 30px;
+        position: relative;
+        a, a:hover, a:active, a:visited{
+            color: $white;
+            text-decoration: none;
+            margin: 0;
+            padding: 0;
+        }
+        .btn-group{
+            width: 100%;
+            margin-top: 5vh;
+        }
+    }
+    .btn-margin{
+        margin-top: 30px;
+    }
+}
+.form-control{
+    margin: 5px;
+}
+#messages{
+    z-index: 2137;
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    transition: opacity 500ms;
+    opacity: 1;
+    &.hide{
+        opacity: 0;
+    }
 }

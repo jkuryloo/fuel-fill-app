@@ -3,25 +3,74 @@
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 {% endblock %}
-
 {% block body %}
-    <header class="container">
-        <h1>Fuel Fill App</h1>
-        <p>An effortless app to track the expenses on your cars, check the average fuel consumption and <span>make your life easier</span></p>
-        <div class="row">
-            <h3>Pick your car:</h3>
-            {% for car in cars %}
-                <div class="car-wrapper col-12 col-md-4">
-                    <div class="car col-12">
-                        <h3>{{ cars[car]['name'] }}</h3>
-                        <p><span>Model:</span> {{ cars[car]['model'] }}</p>
-                        <p><span>Mileage:</span> {{ cars[car]['mileage'] }} km</p>
+    <div id="messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{category}}" role="alert">
+                        {{ message }}
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-        <a href="#" class="btn btn-main">
-            Add new vehicle
-        </a>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <header>
+        <h1>Fuel Fill</h1>
+        <p>An effortless app to track the expenses on your car, check the average fuel consumption and more!</p>
     </header>
+    <section class="container">
+        <div class="row">
+            {% if cars %}
+                {% for car in cars %}
+                    <div class="col-12 col-md-6">
+                        <div class="car-inner shadow col-12">
+                            <div class="container">
+                                <h2>{{ cars[car]['name'] }}</h2>
+                                <p>{{ cars[car]['description'] }}</p>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('delete', id=car) }}" class="btn btn-danger">Delete</a>
+                                    <a href="{{ url_for('manage', id=car) }}" class="btn btn-success">Manage</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h2>You don't have any cars... add some</h2>
+            {% endif %}
+        </div>
+        <button class="btn btn-dark btn-margin" data-bs-toggle="modal" data-bs-target="#add-vehicle-modal">
+            Add new vehicle
+        </button>
+    </section>
+    <div class="modal fade" id="add-vehicle-modal" tabindex="-1" aria-labelledby="add-vehicle-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="add-vehicle-label">Add new vehicle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url_for('index') }}" method="POST">
+                    <div class="modal-body">
+                            <input class="form-control" type="text" placeholder="Name of your car" name="car-name" required>
+                            <input class="form-control" type="text" placeholder="Describe your car (optional)" name="car-description">
+                            <input class="form-control" type="number" min="1" max="999999" placeholder="Mileage of your car" name="car-mileage" required>
+                            <input class="form-control" type="number" min="1" max="999" placeholder="Tank capacity" name="car-capacity" required>
+                            <input class="form-control" type="text" placeholder="Type of fuel" name="car-fuel" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-dark">Add new vehicle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const messages = document.getElementById('messages');
+        setTimeout(() => {
+            messages.className = 'hide';
+        }, 2000);
+    </script>
 {% endblock %}
