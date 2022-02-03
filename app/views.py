@@ -50,6 +50,8 @@ def delete(id):
 @app.route('/manage/<string:id>')
 def manage(id):
     """Route to manage and check vehicle data"""
-    if cars[id]:
-        return id
+    if id in cars:
+        return render_template('manage.html', car=cars[id])
+    else:
+        flash('This car does not exist', 'danger')
     return redirect(url_for('index'))
