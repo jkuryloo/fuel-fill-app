@@ -14,4 +14,85 @@
             </ol>
         </nav>
     </header>
+    <section id="manage" class="container">
+        <h2>Vehicle data</h2>
+        <p>Edit and check your vehicle's info</p>
+        <form class="row g-3" action="{{ url_for(request.endpoint, **request.view_args) }}" method="POST">
+            <div class="col-12 col-md-6">
+                <label for="car-name" class="form-label">Name of your car</label>
+                <input class="form-control" type="text" placeholder="Name of your car" name="car-name" value="{{ car['name'] }}" required>
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="car-name" class="form-label">Mileage of your car</label>
+                <input class="form-control" type="number" min="1" max="999999" placeholder="Mileage of your car" name="car-mileage" value="{{ car['mileage'] }}" required>
+            </div>
+            <div class="col-12">
+                <label for="car-name" class="form-label">Description of your car (optional)</label>
+                <input class="form-control" type="text" placeholder="Describe your car (optional)" name="car-description" value="{{ car['description'] }}">
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="car-name" class="form-label">Tank capacity (max)</label>
+                <input class="form-control" type="number" min="1" max="999" placeholder="Tank capacity" name="car-capacity" value="{{ car['capacity'] }}" required>
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="car-name" class="form-label">Type of fuel</label>
+                <input class="form-control" type="text" placeholder="Type of fuel" name="car-fuel" value="{{ car['fuel_type'] }}" required>
+            </div>
+            <button type="submit" class="btn btn-dark btn-margin">Update your vehicle data</button>          
+        </form>
+        <h2>All fill ups</h2>
+        {% if fillups %}
+            fill ups
+        {% else %}
+            <p>Looks like you didn't fill up your car recently</p>
+        {% endif %}
+        <button type="button" class="btn btn-dark btn-margin" data-bs-toggle="modal" data-bs-target="#add-fill-up-modal">Add a fill up</button>
+        <h2>Last fixes</h2>
+        {% if fixes %}
+            blah blah blah
+        {% else %}
+            <p>Lucky you, no fixes lately</p>
+        {% endif %}
+        <button type="button" class="btn btn-dark btn-margin" data-bs-toggle="modal" data-bs-target="#add-fix-modal">Add a new fix</button>
+
+        <div class="modal fade" id="add-fill-up-modal" tabindex="-1" aria-labelledby="add-fill-up-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-fill-up-label">Add a new fill up</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for(request.endpoint, **request.view_args) }}" method="POST">
+                        <div class="modal-body">
+                            FILLup
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-dark">Add fill up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="add-fix-modal" tabindex="-1" aria-labelledby="add-fix-label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-fix-label">Add a new fix</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for(request.endpoint, **request.view_args) }}" method="POST">
+                        <div class="modal-body">
+                            FIX
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-dark">Add fix data</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

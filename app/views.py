@@ -18,9 +18,20 @@ def add_car(id, name, description, mileage, capacity, fuel):
         "mileage": mileage,
         "capacity": capacity,
         "fuel_type": fuel,
+        "fill_ups": {},
         "fixes": {}
     }
-    return flash('Car added successfully', 'success')
+    return
+
+for _ in range(4):
+    add_car(
+        choice(ascii_letters),
+        choice(ascii_letters),
+        choice(ascii_letters),
+        15,
+        15,
+        "gas"
+    )
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -35,6 +46,7 @@ def index():
                 request.form.get('car-capacity'),
                 request.form.get('car-fuel')
             )
+            flash('Car has been added successfully', 'success')
     return render_template('index.html', cars=cars)
 
 @app.route('/delete/<string:id>')
@@ -47,9 +59,20 @@ def delete(id):
         flash('This car does not exist', 'danger')
     return redirect(url_for('index'))
 
-@app.route('/manage/<string:id>')
+@app.route('/manage/<string:id>', methods=['GET', 'POST'])
 def manage(id):
     """Route to manage and check vehicle data"""
+    if request.method == 'POST':
+        if 'car-name' in request.form:
+            add_car(
+                id,
+                request.form.get('car-name'),
+                request.form.get('car-description'),
+                request.form.get('car-mileage'),
+                request.form.get('car-capacity'),
+                request.form.get('car-fuel')
+            )
+            flash('Your car\'s data has been updated', 'success')
     if id in cars:
         return render_template('manage.html', car=cars[id])
     else:
