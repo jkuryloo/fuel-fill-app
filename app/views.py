@@ -6,8 +6,8 @@ from random import choice
 #cars "database"
 cars = {}
 
-def generate_id(name):
-    return name + "".join([choice(ascii_letters) for _ in range(5)])
+def generate_id(text):
+    return text + "".join([choice(ascii_letters) for _ in range(5)])
 
 def add_car(id, name, description, mileage, capacity, fuel):
     if not description:
@@ -18,20 +18,26 @@ def add_car(id, name, description, mileage, capacity, fuel):
         "mileage": mileage,
         "capacity": capacity,
         "fuel_type": fuel,
-        "fill_ups": {},
+        "fill_ups": {
+            "total_count": 0,
+            "total_gas_amount": 0,
+            "total_price": 0
+        },
         "fixes": {}
     }
     return
 
-for _ in range(4):
-    add_car(
-        choice(ascii_letters),
-        choice(ascii_letters),
-        choice(ascii_letters),
-        15,
-        15,
-        "gas"
-    )
+def add_fill_up(id, gas, price):
+    cars[id]['fill_ups']['total_count'] += 1 
+    cars[id]['fill_ups']['total_gas_amount'] += float(gas)
+    cars[id]['fill_ups']['total_price'] += float(gas) * float(price)
+    fill_up_id = cars[id]['fill_ups']['total_count']
+    cars[id]['fill_ups'][fill_up_id] = {
+        "gas_amount": gas,
+        "price": price,
+        "total": round(float(gas) * float(price), 2)
+    }
+    return
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -73,6 +79,12 @@ def manage(id):
                 request.form.get('car-fuel')
             )
             flash('Your car\'s data has been updated', 'success')
+        if 'add-fill-up-gas' in request.form:
+            add_fill_up(
+                id,
+                request.form.get('add-fill-up-gas'),
+                request.form.get('add-fill-up-price'),
+            )
     if id in cars:
         return render_template('manage.html', car=cars[id])
     else:

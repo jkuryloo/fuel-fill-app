@@ -41,8 +41,13 @@
             <button type="submit" class="btn btn-dark btn-margin">Update your vehicle data</button>          
         </form>
         <h2>All fill ups</h2>
-        {% if fillups %}
-            fill ups
+        <p></p>
+        {% if car['fill_ups']['total_count'] != 0 %}
+            <p>Total number of fill ups: {{ car['fill_ups']['total_count'] }}</p>
+            <p>You poured {{ car['fill_ups']['total_gas_amount'] }}L in total</p>
+            <p>You paid for everything: {{ car['fill_ups']['total_price'] }}</p>
+            <p>Av. price for 1L: {{ car['fill_ups']['total_price'] / car['fill_ups']['total_gas_amount'] }}</p>
+            <h3>History of fill ups (to do)</h3>
         {% else %}
             <p>Looks like you didn't fill up your car recently</p>
         {% endif %}
@@ -64,7 +69,11 @@
                     </div>
                     <form action="{{ url_for(request.endpoint, **request.view_args) }}" method="POST">
                         <div class="modal-body">
-                            FILLup
+                            <input id="add-fill-up-gas" class="form-control" type="number" step="0.01" min="1" max="{{ car['capacity'] }}" placeholder="How much you filled (L)" name="add-fill-up-gas" required>
+                            <input id="add-fill-up-price" class="form-control" type="number" step="0.01" min="1" max="999999" placeholder="Price" name="add-fill-up-price" required>
+                            <div id="add-fill-up-total">
+                                <h4>Your total: <span id="add-fill-up-total-2">$0</span></h4>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -95,4 +104,24 @@
             </div>
         </div>
     </section>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const fillUpGas = document.getElementById("add-fill-up-gas");
+            const fillUpPrice = document.getElementById("add-fill-up-price");
+            const fillUpTotal = document.getElementById("add-fill-up-total-2");
+            let total = 0;
+            fillUpGas.onkeyup = fillUpPrice.onkeyup = () => {
+                try {
+                    total = Math.round(parseFloat(fillUpGas.value) * parseFloat(fillUpPrice.value) * 100) / 100;
+                    if(total > 0 && total < 9007199254740991){
+                        fillUpTotal.innerHTML = "$" + total;
+                    } 
+                    else{
+                        fillUpTotal.innerHTML = "$0";
+                    }
+                } catch (error) {}
+            };
+        });
+    </script>
 {% endblock %}
