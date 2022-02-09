@@ -20,4 +20,4 @@ Things to add in the future
 ## Contact
 Jakub - [LinkedIn](https://www.linkedin.com/in/jakub-kuryło-69a57a197/) - jkuryloo@gmail.com
 
-Project Link: [https://github.com/jkuryloo/fuel-fill-app](https://github.com/jkuryloo/fuel-fill-appe)
+Project Link: [https://github.com/jkuryloo/fuel-fill-app](https://github.com/jkuryloo/fuel-fill-app)
