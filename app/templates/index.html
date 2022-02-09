@@ -13,13 +13,13 @@
             {% if cars %}
                 {% for car in cars %}
                     <div class="col-12 col-md-6">
-                        <div class="car-inner shadow col-12">
+                        <div class="col-12 car-inner shadow">
                             <div class="container">
-                                <h2>{{ cars[car]['name'] }}</h2>
-                                <p>{{ cars[car]['description'] }}</p>
+                                <h2>{{ car.name }}</h2>
+                                <p>{{ car.description }}</p>
                                 <div class="btn-group">
-                                    <a href="{{ url_for('delete', id=car) }}" class="btn btn-danger">Delete</a>
-                                    <a href="{{ url_for('manage', id=car) }}" class="btn btn-success">Manage</a>
+                                    <a href="{{ url_for('delete', id=car.id) }}" class="btn btn-danger">Delete</a>
+                                    <a href="{{ url_for('manage', id=car.id) }}" class="btn btn-success">Manage</a>
                                 </div>
                             </div>
                         </div>

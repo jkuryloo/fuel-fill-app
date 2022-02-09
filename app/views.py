@@ -1,51 +1,61 @@
-from app import app
+from app import app, db 
 from flask import render_template, request, redirect, url_for, flash
+from .models import Car, FillUp, Fix
 from string import ascii_letters
 from random import choice
-
-#cars "database"
-cars = {}
 
 def generate_id(text):
     return text + "".join([choice(ascii_letters) for _ in range(5)])
 
-def add_car(id, name, description, mileage, capacity, fuel):
-    if not description:
-        description = "Why not adding some description? Click manage button!"
-    cars[id] = {
-        "name": name,
-        "description": description,
-        "mileage": mileage,
-        "capacity": capacity,
-        "fuel_type": fuel,
-        "fill_ups": {
-            "total_count": 0,
-            "total_gas_amount": 0,
-            "total_price": 0
-        },
-        "fixes": {}
-    }
+def add_car(name, description, mileage, capacity, fuel):
+    car = Car(
+        id = generate_id(name),
+        name = name,
+        mileage = mileage,
+        capacity = capacity,
+        fuel_type = fuel
+    )
+    if description:
+        car.description = description
+    db.session.add(car)
+    db.session.commit()
     return
 
-def add_fill_up(id, gas, price):
-    cars[id]['fill_ups']['total_count'] += 1 
-    cars[id]['fill_ups']['total_gas_amount'] += float(gas)
-    cars[id]['fill_ups']['total_price'] += float(gas) * float(price)
-    fill_up_id = cars[id]['fill_ups']['total_count']
-    cars[id]['fill_ups'][fill_up_id] = {
-        "gas_amount": gas,
-        "price": price,
-        "total": round(float(gas) * float(price), 2)
-    }
+def update_car(car: Car, name, description, mileage, capacity, fuel):
+    car.name = name 
+    car.description = description
+    car.mileage = mileage 
+    car.capacity = capacity 
+    car.fuel = fuel 
+    db.session.commit()
+    return 
+
+def add_fill_up(car: Car, gas, price):
+    gas = float(gas)
+    price = float(price)
+
+    fill_up = FillUp(
+        car_id = car.id,
+        amount = gas,
+        price = price,
+        total = round(gas * price, 2)
+    )
+
+    car.total_fill_ups += 1
+    car.total_gas_refilled += gas
+    car.total_spend += round(gas * price, 2)
+
+    db.session.add(fill_up)
+    db.session.commit()
     return
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """Home page, you can see all your vehicles from there and pick one to manage its data"""
+    cars = db.session.query(Car).all()
     if request.method == 'POST':
         if 'car-name' in request.form:
             add_car(
-                generate_id(request.form.get('car-name')),
                 request.form.get('car-name'),
                 request.form.get('car-description'),
                 request.form.get('car-mileage'),
@@ -53,13 +63,16 @@ def index():
                 request.form.get('car-fuel')
             )
             flash('Car has been added successfully', 'success')
+            return redirect(url_for('index'))
     return render_template('index.html', cars=cars)
 
 @app.route('/delete/<string:id>')
 def delete(id):
     """Route to delete the existing vehicle from the dashboard"""
-    if id in cars:
-        del cars[id]
+    car = Car.query.filter_by(id=id).first()
+    if car:
+        db.session.delete(car)
+        db.session.commit()
         flash('Car deleted successfully', 'success')
     else:
         flash('This car does not exist', 'danger')
@@ -68,10 +81,12 @@ def delete(id):
 @app.route('/manage/<string:id>', methods=['GET', 'POST'])
 def manage(id):
     """Route to manage and check vehicle data"""
+    car = Car.query.filter_by(id=id).first()
+
     if request.method == 'POST':
         if 'car-name' in request.form:
-            add_car(
-                id,
+            update_car(
+                car,
                 request.form.get('car-name'),
                 request.form.get('car-description'),
                 request.form.get('car-mileage'),
@@ -81,12 +96,15 @@ def manage(id):
             flash('Your car\'s data has been updated', 'success')
         if 'add-fill-up-gas' in request.form:
             add_fill_up(
-                id,
+                car,
                 request.form.get('add-fill-up-gas'),
                 request.form.get('add-fill-up-price'),
             )
-    if id in cars:
-        return render_template('manage.html', car=cars[id])
+            flash('Your car has been filled up successfully', 'success')
+    if car:
+        fill_ups = FillUp.query.filter_by(car_id=id).order_by(FillUp.date.desc()).all()
+        return render_template('manage.html', car=car, fill_ups=fill_ups)
     else:
         flash('This car does not exist', 'danger')
+
     return redirect(url_for('index'))

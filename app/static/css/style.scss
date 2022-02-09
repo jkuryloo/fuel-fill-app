@@ -68,6 +68,14 @@ section{
             margin-top: 5vh;
         }
     }
+    .fill-up-inner{
+        padding: 10px;
+        margin-top: 10px;
+        p{
+            opacity: 1;
+        }
+        border-bottom: 1px black solid;
+    }
     .btn-margin{
         margin-top: 30px;
         max-width: 300px;

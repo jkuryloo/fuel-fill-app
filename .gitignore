@@ -133,3 +133,4 @@ dmypy.json
 *.css.map
 *.sass.map
 *.scss.map
+.DS_Store
