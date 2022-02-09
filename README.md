@@ -9,6 +9,7 @@ You can check the app live on [Heroku](https://fuel-fill-app.herokuapp.com)
 ## Built With
 * [Flask](https://flask.palletsprojects.com/en/2.0.x/)
 * [Flask SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+* [SCSS](https://sass-lang.com)
 * [Bootstrap](https://getbootstrap.com)
 
 
