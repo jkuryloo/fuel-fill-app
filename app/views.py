@@ -33,19 +33,36 @@ def update_car(car: Car, name, description, mileage, capacity, fuel):
 def add_fill_up(car: Car, gas, price):
     gas = float(gas)
     price = float(price)
+    total = round(gas * price, 2)
 
     fill_up = FillUp(
         car_id = car.id,
         amount = gas,
         price = price,
-        total = round(gas * price, 2)
+        total = total
     )
 
     car.total_fill_ups += 1
     car.total_gas_refilled += gas
-    car.total_spend += round(gas * price, 2)
+    car.total_spend_fill_ups += total
 
     db.session.add(fill_up)
+    db.session.commit()
+    return
+
+def add_fix(car: Car, description, total):
+    total = round(float(total), 2)
+
+    fix = Fix(
+        car_id = car.id,
+        description = description,
+        total = total
+    )
+
+    car.total_fixes += 1
+    car.total_spend_fixes += total
+
+    db.session.add(fix)
     db.session.commit()
     return
 
@@ -101,9 +118,17 @@ def manage(id):
                 request.form.get('add-fill-up-price'),
             )
             flash('Your car has been filled up successfully', 'success')
+        if 'add-fix-description' in request.form:
+            add_fix(
+                car,
+                request.form.get('add-fix-description'),
+                request.form.get('add-fix-total')
+            )
+            flash('Your fix has been successfully added', 'success')
     if car:
         fill_ups = FillUp.query.filter_by(car_id=id).order_by(FillUp.date.desc()).all()
-        return render_template('manage.html', car=car, fill_ups=fill_ups)
+        fixes = Fix.query.filter_by(car_id=id).order_by(Fix.date.desc()).all()
+        return render_template('manage.html', car=car, fill_ups=fill_ups, fixes=fixes)
     else:
         flash('This car does not exist', 'danger')
 
